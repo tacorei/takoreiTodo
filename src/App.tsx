@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, Users, Gift } from 'lucide-react';
 import { TaskList } from './components/TaskList';
 import { PointsDisplay } from './components/PointsDisplay';
@@ -6,66 +6,59 @@ import { RewardsList } from './components/RewardsList';
 import type { Task, Reward } from './types';
 
 function App() {
-  const [tasks] = useState<Task[]>([
-    {
-      id: '1',
-      title: 'Pack school bag',
-      completed: false,
-      points: 10,
-      category: 'daily',
-    },
-    {
-      id: '2',
-      title: 'Prepare lunch box',
-      completed: false,
-      points: 15,
-      category: 'daily',
-    },
-    {
-      id: '3',
-      title: 'Clean room',
-      completed: false,
-      points: 20,
-      category: 'special',
-    },
+  const [tasks, setTasks] = useState<Task[]>([
+    { id: '1', title: 'Pack school bag', completed: false, points: 10, category: 'daily', dueDate: '2024-12-22', reminderTime: '2024-12-21T08:00:00' },
+    { id: '2', title: 'Prepare lunch box', completed: false, points: 15, category: 'daily', dueDate: '2024-12-22', reminderTime: '2024-12-21T08:15:00' },
   ]);
-
-  const [rewards] = useState<Reward[]>([
-    {
-      id: '1',
-      title: 'Extra Screen Time',
-      description: '30 minutes of additional screen time',
-      pointsCost: 50,
-      available: true,
-    },
-    {
-      id: '2',
-      title: 'Special Treat',
-      description: 'Choose a special snack or treat',
-      pointsCost: 75,
-      available: true,
-    },
+  const [rewards, setRewards] = useState<Reward[]>([
+    { id: '1', title: 'Extra Screen Time', description: '30 minutes of screen time', pointsCost: 50, available: true },
   ]);
+  const [userPoints, setUserPoints] = useState(100);
 
-  const [userPoints] = useState(100);
+  useEffect(() => {
+    tasks.forEach(task => {
+      if (task.reminderTime) {
+        const now = new Date();
+        const reminderTime = new Date(task.reminderTime);
+        const delay = reminderTime.getTime() - now.getTime();
+        if (delay > 0) {
+          setTimeout(() => {
+            if (Notification.permission === 'granted') {
+              new Notification(`Reminder: ${task.title}`);
+            }
+          }, delay);
+        }
+      }
+    });
+  }, [tasks]);
 
   const handleTaskToggle = (taskId: string) => {
-    // Implementation for task toggle and points management
-    console.log('Toggle task:', taskId);
+    const updatedTasks = tasks.map(task =>
+      task.id === taskId ? { ...task, completed: !task.completed } : task
+    );
+    setTasks(updatedTasks);
+
+    const completedTask = updatedTasks.find(task => task.id === taskId && task.completed);
+    if (completedTask) {
+      setUserPoints(prev => prev + completedTask.points);
+    }
   };
 
   const handleRedeemReward = (rewardId: string) => {
-    // Implementation for reward redemption
-    console.log('Redeem reward:', rewardId);
+    const reward = rewards.find(r => r.id === rewardId);
+    if (reward && userPoints >= reward.pointsCost) {
+      setUserPoints(prev => prev - reward.pointsCost);
+      setRewards(prev =>
+        prev.map(r => (r.id === rewardId ? { ...r, available: false } : r))
+      );
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="max-w-4xl mx-auto p-6">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Task Master
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Task Master</h1>
           <PointsDisplay points={userPoints} rank={1} />
         </header>
 

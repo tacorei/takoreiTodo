@@ -10,7 +10,7 @@ interface TaskListProps {
 export function TaskList({ tasks, onTaskToggle }: TaskListProps) {
   return (
     <div className="space-y-4">
-      {tasks.map((task) => (
+      {tasks.map(task => (
         <div
           key={task.id}
           className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
