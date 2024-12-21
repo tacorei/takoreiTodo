@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>タスク管理アプリ</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>タスク管理</h1>
+      <div id="points-display">
+        <span id="points">0</span> ポイント
+      </div>
+    </header>
+
+    <nav>
+      <button data-tab="tasks" class="active">やることリスト</button>
+      <button data-tab="rewards">ポイント交換所</button>
+      <button data-tab="friends">友達</button>
+    </nav>
+
+    <main>
+      <!-- タスクリスト -->
+      <section id="tasks" class="tab-content active">
+        <div class="task-buttons">
+          <button data-list="daily">日常タスク</button>
+          <button data-list="special">スペシャルタスク</button>
+        </div>
+        <div id="task-list"></div>
+        <button id="add-task" class="add-button">＋ タスクを追加</button>
+      </section>
+
+      <!-- ポイント交換所 -->
+      <section id="rewards" class="tab-content">
+        <div id="rewards-list"></div>
+      </section>
+
+      <!-- 友達 -->
+      <section id="friends" class="tab-content">
+        <div id="friends-list"></div>
+        <button id="add-friend" class="add-button">＋ 友達を追加</button>
+      </section>
+    </main>
+  </div>
+
+  <!-- モーダル -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- JavaScriptファイルの読み込み順序を修正 -->
+  <script src="/js/storage.js"></script>
+  <script src="/js/notifications.js"></script>
+  <script src="/js/tasks.js"></script>
+  <script src="/js/rewards.js"></script>
+  <script src="/js/friends.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
